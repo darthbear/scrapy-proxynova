@@ -1,4 +1,4 @@
 #!/bin/sh
 
-#export PYTHONPATH=$PYTHONPATH:$PWD
+export PYTHONPATH=$PYTHONPATH:$PWD
 (cd example-project; scrapy crawl dealsplus)

@@ -3,6 +3,9 @@ import random
 
 class HttpProxyMiddleware(object):
     def __init__(self, cache_file):
+        if (cache_file is None):
+                cache_file = '/tmp/__proxy_list_cache.json'
+
 	self.proxies = Proxies(cache_file)	
 
     @classmethod

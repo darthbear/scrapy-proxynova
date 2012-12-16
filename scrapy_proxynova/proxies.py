@@ -30,7 +30,7 @@ countries = {
     'it': 'Italy',
     'ec': 'Ecuador',
     'gb': 'United Kingdom',
-    'jp': 'selected="selected">Japan',
+    'jp': 'Japan',
     'nl': 'Netherlands',
     'tr': 'Turkey',
     'cl': 'Chile',

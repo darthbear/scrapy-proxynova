@@ -6,8 +6,8 @@ setup(
     description='Allows scrapy to use proxy list from proxynova.com',
     keywords='scrapy proxy',
     license='New BSD License',
-    author="Alexander Artemenko",
-    author_email='svetlyak.40wt@gmail.com',
+    author="Alexander Artemenko, Francois Dang Ngoc",
+    author_email='svetlyak.40wt@gmail.com, francois.dangngoc@gmail.com',
     url='http://github.com/svetlyak40wt/scrapy-proxynova/',
     classifiers=[
         'Development Status :: 4 - Beta',

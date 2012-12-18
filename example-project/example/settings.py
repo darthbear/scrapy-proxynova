@@ -20,7 +20,7 @@ DOWNLOADER_MIDDLEWARES = {
         'scrapy.contrib.downloadermiddleware.downloadtimeout.DownloadTimeoutMiddleware':100
 }   
 
-PROXY_SERVER_LIST_CACHE_FILE='/tmp/__proxy_servers.json'
+PROXY_SERVER_LIST_CACHE_FILE='/tmp/__proxy_servers.txt'
     
 DOWNLOAD_TIMEOUT=30
 

@@ -1,8 +1,8 @@
-import json
 import os
 import random
 import re
 import requests
+import sys
 
 countries = {
     'br': 'Brazil',
@@ -72,7 +72,6 @@ def get_proxies(country=None, timeout=None, limit=None, logger=None):
     base_url = ('http://www.proxynova.com/proxy-server-list/'
                 'country-{country}/?p={page_number}')
     pattern = re.compile(
-        'data-proxy-ip="450">.*?'
         'proxy_decode\\(\'([0-9]*)\'\\).*?port-([0-9]*)/',
         re.DOTALL
     )
@@ -126,21 +125,42 @@ def get_proxies(country=None, timeout=None, limit=None, logger=None):
 
 
 class Proxies(object):
-    def __init__(self, cache_file, **kwargs):
-        self.cache_file = cache_file
-        if os.path.exists(self.cache_file):
-            with open(self.cache_file) as f:
-                self.proxies = json.loads(f.read())
+    def __init__(self, proxy_file, **kwargs):
+        self.proxy_file = proxy_file
+        if os.path.exists(self.proxy_file):
+            with open(self.proxy_file) as f:
+		self.proxies = []
+		for line in iter(f):
+		    server = line.strip()
+		    if len(server) > 0:
+		        self.proxies.append(line)
+	        if len(self.proxies) == 0:
+		    raise IOError("Proxy file '%s' is empty"%self.proxy_file)
         else:
-            self.proxies = get_proxies(**kwargs)
-
-            with open(self.cache_file, 'w+') as f:
-                f.write(json.dumps(self.proxies))
+	    raise IOError("Cannot find proxy file '%s'"%self.proxy_file)
 
     def get_proxy(self):
         return random.choice(self.proxies)
 
 
 if __name__ == '__main__':
-    proxies = get_proxies()
-    print '\n'.join(proxies)
+    if len(sys.argv) < 5:
+	sys.exit('Usage: %s <country code> <timeout in secs> <max proxies> <output file>'%sys.argv[0])
+
+    country = sys.argv[1].lower()
+    timeout = int(sys.argv[2])
+    max_proxies = int(sys.argv[3])
+    proxy_file = sys.argv[4]
+
+    try:
+        proxies = get_proxies(country, timeout, max_proxies)
+    except Exception, e:
+        sys.stderr.write("Error while fetching proxies from proxynova.com: %s\n"%e)
+	sys.exit(1)
+
+    if len(proxies) == 0:
+        sys.stderr.write("Error: Cannot find any available proxies\n")
+	sys.exit(1)
+    else:
+        with open(proxy_file, 'w+') as f:
+	    f.write('\n'.join(proxies))

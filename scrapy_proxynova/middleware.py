@@ -1,7 +1,6 @@
 from proxies import Proxies
 from scrapy import log
 
-
 class HttpProxyMiddleware(object):
     def __init__(self, *args, **kwargs):
         self.proxies = Proxies(*args, **kwargs)
@@ -11,7 +10,7 @@ class HttpProxyMiddleware(object):
         return cls(
             crawler.settings.get(
                 'PROXY_SERVER_LIST_CACHE_FILE',
-                'proxies.json'
+                'proxies.txt'
             ),
             country=crawler.settings['PROXY_SERVER_COUNTRY'],
             timeout=crawler.settings['PROXY_SERVER_TIMEOUT'],

@@ -72,9 +72,10 @@ def get_proxies(country=None, timeout=None, limit=None, logger=None):
     base_url = ('http://www.proxynova.com/proxy-server-list/'
                 'country-{country}/?p={page_number}')
     pattern = re.compile(
-        'proxy_decode\\(\'([0-9]*)\'\\).*?port-([0-9]*)/',
-        re.DOTALL
+	'<script>([^<]+);document[^<]+</script>.*?port-([0-9]+)',
+	re.DOTALL
     )
+
     proxies = []
 
     for page_number in range(1, 5):
@@ -88,16 +89,15 @@ def get_proxies(country=None, timeout=None, limit=None, logger=None):
             if len(proxies) == limit:
                 break
 
-            ip = int(m.group(1))
+	    # only keep hex numbers
+	    # and decode it :-)
+            raw_string = m.group(1)
+	    raw_string = re.sub('[a-z]=\\["', '', raw_string)
+	    raw_string = re.sub('"\\]', '', raw_string)
+	    raw_string = re.sub('\\\\x', '', raw_string)
+	    raw_string = re.sub(';', '', raw_string)
+	    full_ip = raw_string.decode("hex")
             port = int(m.group(2))
-
-            # they encode the ip as a 32 bit int.
-            # just decode it to an X.X.X.X notation
-            octet1 = int(ip / 16777216)
-            octet2 = int((ip % 16777216) / 65536)
-            octet3 = int((ip % 65536) / 256)
-            octet4 = ip % 256
-            full_ip = '.'.join(map(str, (octet1, octet2, octet3, octet4)))
             server = '{0}:{1}'.format(full_ip, port)
             logger('Checking ' + server)
 

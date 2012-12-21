@@ -12,9 +12,10 @@ class HttpProxyMiddleware(object):
                 'PROXY_SERVER_LIST_CACHE_FILE',
                 'proxies.txt'
             ),
-            country=crawler.settings['PROXY_SERVER_COUNTRY'],
-            timeout=crawler.settings['PROXY_SERVER_TIMEOUT'],
-            limit=crawler.settings['PROXY_SERVER_LIMIT'],
+            crawler.settings.get(
+            	'PROXY_BYPASS_PERCENT',
+		'0'
+	    ),
             logger=lambda message: log.msg(message),
         )
 

@@ -19,7 +19,4 @@ Options
 Set these options in the `settings.py`.
 
 * PROXY_SERVER_LIST_CACHE_FILE — a file to store proxies list. Default: `proxies.txt`.
-* PROXY_SERVER_COUNTRY — country code, to select proxies from. Default: `us`.
-* PROXY_SERVER_TIMEOUT — access timeout, in seconds. If proxy does not respond in time,
-  during the check, then it considered dead. Default: 1 second.
-* PROXY_SERVER_LIMIT — a number of proxies in the list. Default: 10.
+* PROXY_BYPASS_PERCENT — probability for a connection to use a direct connection and not use a proxy

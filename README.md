@@ -13,6 +13,11 @@ Example:
 
 To regenerate the proxy list, run: python proxies.py
 
+In settings.py add the following line:
+DOWNLOADER_MIDDLEWARES = {
+        'scrapy_proxynova.middleware.HttpProxyMiddleware': 543
+}   
+
 Options
 -------
 

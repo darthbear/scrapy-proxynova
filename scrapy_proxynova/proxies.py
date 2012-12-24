@@ -125,7 +125,7 @@ def get_proxies(country=None, timeout=None, limit=None, logger=None):
 
 
 class Proxies(object):
-    def __init__(self, proxy_file, bypass_percent, **kwargs):
+    def __init__(self, proxy_file, **kwargs):
         self.proxy_file = proxy_file
         if os.path.exists(self.proxy_file):
             with open(self.proxy_file) as f:
@@ -139,11 +139,8 @@ class Proxies(object):
         else:
 	    raise IOError("Cannot find proxy file '%s'"%self.proxy_file)
 
-	self.bypass_percent = int(bypass_percent)
-
     def get_proxy(self):
-	if random.randint(0, 100) > self.bypass_percent:
-            return random.choice(self.proxies)
+        return random.choice(self.proxies)
 
 
 if __name__ == '__main__':

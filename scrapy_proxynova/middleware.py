@@ -28,5 +28,6 @@ class HttpProxyMiddleware(object):
             log.msg('Using proxy ' + proxy, spider=spider)
             request.meta['proxy'] = 'http://' + proxy
 	else:
-	    del request.meta['proxy']
+	    if 'proxy' in request.meta:
+	        del request.meta['proxy']
             log.msg('No proxy used', spider=spider)

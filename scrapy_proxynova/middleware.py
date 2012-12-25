@@ -22,8 +22,8 @@ class HttpProxyMiddleware(object):
         )
 
     def process_request(self, request, spider):
-	n = random.randint(0, 100)
-	if n > self.bypass_percent:
+	n = random.randint(0, 99)
+	if n >= self.bypass_percent:
             proxy = self.proxies.get_proxy()
             log.msg('Using proxy ' + proxy, spider=spider)
             request.meta['proxy'] = 'http://' + proxy

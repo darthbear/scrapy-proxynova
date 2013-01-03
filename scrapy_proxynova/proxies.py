@@ -3,6 +3,7 @@ import random
 import re
 import requests
 import sys
+import StringIO
 
 countries = {
     'br': 'Brazil',
@@ -69,57 +70,43 @@ def get_proxies(country=None, timeout=None, limit=None, logger=None):
     if country not in countries:
         raise RuntimeError('Not allowed country code.')
 
-    base_url = ('http://www.proxynova.com/proxy-server-list/'
-                'country-{country}/?p={page_number}')
-    pattern = re.compile(
-	'<script>([^<]+);document[^<]+</script>.*?port-([0-9]+)',
-	re.DOTALL
-    )
+    base_url = ('http://www.proxynova.com/proxy_list.txt?country={country}')
 
     proxies = []
 
-    for page_number in range(1, 5):
+    url = base_url.format(**locals())
+    response = requests.get(url)
+
+    ip_port_pattern = re.compile("(\d+\.\d+\.\d+\.\d+:\d+)")
+    buf = StringIO.StringIO(response.content)
+    line = buf.readline()
+    while line:
         if len(proxies) == limit:
-            break
+           break
 
-        url = base_url.format(**locals())
-        response = requests.get(url)
-
-        for m in pattern.finditer(response.content):
-            if len(proxies) == limit:
-                break
-
-	    # only keep hex numbers
-	    # and decode it :-)
-            raw_string = m.group(1)
-	    raw_string = re.sub('[a-z]=\\["', '', raw_string)
-	    raw_string = re.sub('"\\]', '', raw_string)
-	    raw_string = re.sub('\\\\x', '', raw_string)
-	    raw_string = re.sub(';', '', raw_string)
-	    full_ip = raw_string.decode("hex")
-            port = int(m.group(2))
-            server = '{0}:{1}'.format(full_ip, port)
-            logger('Checking ' + server)
-
+	match = ip_port_pattern.match(line)
+        if match:
+	    server = match.group(0)
             try:
-                response = requests.get(
-                    'http://www.linkedin.com',
-                    proxies=dict(http=server),
-                    timeout=timeout,
-                )
-                if 'Company Directory' in response.content:
-                    logger('Found alive proxy: ' + server)
-                    proxies.append(server)
-                else:
-                    logger(
-                        'Error while reading data from '
-                        'proxy {0}. Skipping...'.format(server)
-                    )
+	        response = requests.get(
+		              'http://www.linkedin.com',
+		              proxies=dict(http=server),
+                              timeout=timeout,
+                           )
+	        if 'Company Directory' in response.content:
+	            logger('Found alive proxy: ' + server)
+	            proxies.append(server)
+	        else:
+	            logger(
+		        'Error while reading data from '
+		        'proxy {0}. Skipping...'.format(server)
+	            )
             except Exception, e:
-                logger('An error occured: {}. Skipping server {}'.format(
-                    e,
-                    server
-                ))
+	        logger('An error occured: {}. Skipping server {}'.format(
+	               e,
+	               server
+	         ))
+	line = buf.readline()
 
     return proxies
 
